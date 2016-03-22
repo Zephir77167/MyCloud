@@ -7,26 +7,37 @@ using Google.Apis.Storage.v1.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using MyCloud;
+using System.Threading.Tasks;
 
 namespace Mycloud
 {
-    public class GoogleDrive
+    public class GoogleDrive : IStorage
     {
         private IConfigurableHttpClientInitializer _credentials;
-        public GoogleDrive()
-        {
-            _credentials = GetInstalledApplicationCredentials();
-
-            Run(_credentials);
-        }
+        private StorageService _service;
+        private string _path = string.Empty;
+        private string _bucket = "";
 
         private const int KB = 0x400;
         private const int DownloadChunkSize = 256 * KB;
 
-        public IConfigurableHttpClientInitializer
-            GetInstalledApplicationCredentials()
+        public void Connect()
+        {
+            _credentials = GetInstalledApplicationCredentials();
+
+            _service = new StorageService(
+                new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = _credentials,
+                    ApplicationName = "MyCloud",
+                });
+        }
+
+        public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials()
         {
             var secrets = new ClientSecrets
             {
@@ -40,55 +51,42 @@ namespace Mycloud
                 .Result;
         }
 
-        public void Run(IConfigurableHttpClientInitializer credential)
+        public List<string> GetBucketList()
         {
-            string projectId = "";
-            string bucketName = "";
+            List<string> buckets = new List<string>();
 
-            StorageService service = new StorageService(
-                new BaseClientService.Initializer()
-                {
-                    HttpClientInitializer = credential,
-                    ApplicationName = "GCS Sample",
-                });
+            return (buckets);
+        }
 
-            Console.WriteLine("List of buckets in current project");
-            // TODO: c'est quoi projectId ? -> le récup
-            Buckets buckets = service.Buckets.List(projectId).Execute();
+        public List<string> GetFolderList()
+        {
+            List<string> folders = new List<string>();
 
-            foreach (var bucket in buckets.Items)
-            {
-                Console.WriteLine(bucket.Name);
-            }
+            return (folders);
+        }
 
-            // TODO: choisir un bucketName
+        public List<string> GetFileList()
+        {
+            List<string> files = new List<string>();
 
-            Console.WriteLine("Total number of items in bucket: "
-                + buckets.Items.Count);
-            Console.WriteLine("=============================");
+            return (files);
+        }
 
-            // using Google.Apis.Storage.v1.Data.Object to disambiguate from
-            // System.Object
-            Google.Apis.Storage.v1.Data.Object fileobj =
-                new Google.Apis.Storage.v1.Data.Object()
-                {
-                    Name = "somefile.txt"
-                };
+        public void GoToFolder(string folder)
+        {
+            _path += "/" + folder;
+        }
 
-            Console.WriteLine("Creating " + fileobj.Name + " in bucket "
-                + bucketName);
-            byte[] msgtxt = Encoding.UTF8.GetBytes("Lorem Ipsum");
+        public void GoBackToParent()
+        {
+            int index = _path.LastIndexOf('/');
 
-            service.Objects.Insert(fileobj, bucketName,
-                new MemoryStream(msgtxt), "text/plain").Upload();
+            _path = ((index == -1) ? (string.Empty) : (_path.Substring(0, index)));
+        }
 
-            Console.WriteLine("Object created: " + fileobj.Name);
-
-            Console.WriteLine("=============================");
-
-            Console.WriteLine("Reading object " + fileobj.Name + " in bucket: "
-                + bucketName);
-            var req = service.Objects.Get(bucketName, fileobj.Name);
+        public void DownloadFile(string file)
+        {
+            var req = _service.Objects.Get(_bucket, _path + "/" + file);
             Google.Apis.Storage.v1.Data.Object readobj = req.Execute();
 
             Console.WriteLine("Object MediaLink: " + readobj.MediaLink);
@@ -99,7 +97,7 @@ namespace Mycloud
             var fileName = Path.Combine(pathUser, "Downloads") + "\\"
                 + readobj.Name;
             Console.WriteLine("Starting download to " + fileName);
-            var downloader = new MediaDownloader(service)
+            var downloader = new MediaDownloader(_service)
             {
                 ChunkSize = DownloadChunkSize
             };
@@ -127,6 +125,49 @@ namespace Mycloud
                 }
             }
             Console.WriteLine("=============================");
+        }
+
+        public void Sample() // code pour piocher
+        {
+            string projectId = "";
+            string bucketName = "";
+
+            Console.WriteLine("List of buckets in current project");
+            // TODO: c'est quoi projectId ? -> le récup
+            Buckets buckets = _service.Buckets.List(projectId).Execute();
+
+            foreach (var bucket in buckets.Items)
+            {
+                Console.WriteLine(bucket.Name);
+            }
+
+            // TODO: choisir un bucketName
+
+            Console.WriteLine("Total number of items in bucket: "
+                + buckets.Items.Count);
+            Console.WriteLine("=============================");
+
+            // using Google.Apis.Storage.v1.Data.Object to disambiguate from
+            // System.Object
+            Google.Apis.Storage.v1.Data.Object fileobj =
+                new Google.Apis.Storage.v1.Data.Object()
+                {
+                    Name = "somefile.txt"
+                };
+
+            Console.WriteLine("Creating " + fileobj.Name + " in bucket "
+                + bucketName);
+            byte[] msgtxt = Encoding.UTF8.GetBytes("Lorem Ipsum");
+
+            _service.Objects.Insert(fileobj, bucketName,
+                new MemoryStream(msgtxt), "text/plain").Upload();
+
+            Console.WriteLine("Object created: " + fileobj.Name);
+
+            Console.WriteLine("=============================");
+
+            Console.WriteLine("Reading object " + fileobj.Name + " in bucket: "
+                + bucketName);
         }
     }
 }
