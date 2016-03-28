@@ -36,6 +36,19 @@ namespace MyCloud
             loginBox.Show();
 
         }
+        private void CloudDisconnect(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void CloudRefresh(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void CloudSuppr(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 
 }
