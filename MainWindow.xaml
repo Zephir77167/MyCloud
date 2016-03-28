@@ -54,7 +54,7 @@
                             </Button>
                         </DockPanel>
                         <DockPanel Grid.Row="1">
-                            <ListView x:Name="list" Margin="2"  ItemsSource="{Binding Path=MyCloud.CloudList}">
+                            <ListView x:Name="cloudItemList" Margin="2"  ItemsSource="{Binding Path=MyCloud.CloudList}">
                                 <ListView.View>
                                     <GridView  AllowsColumnReorder="True" ColumnHeaderToolTip="Cloud directory">
                                         <GridViewColumn Header="Host" DisplayMemberBinding="{Binding Path=Host}"/>

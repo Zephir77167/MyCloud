@@ -25,17 +25,20 @@ namespace MyCloud
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<IStorage> cloudList { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
+          
+            cloudItemList.ItemsSource = cloudList;
         }
         private void CloudConnect(object sender, RoutedEventArgs e)
         {
-            ConnectWindow loginBox = new ConnectWindow();
+            ConnectWindow loginBox = new ConnectWindow(cloudList);
             loginBox.Show();
-
         }
+
         private void CloudDisconnect(object sender, RoutedEventArgs e)
         {
 

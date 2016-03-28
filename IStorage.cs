@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyCloud
 {
-    interface IStorage
+    public interface IStorage
     {
         void Connect(string userName, string password);
         List<string> GetBucketList();

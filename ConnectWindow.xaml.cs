@@ -17,16 +17,25 @@ namespace MyCloud
     /// <summary>
     /// Logique d'interaction pour Window1.xaml
     /// </summary>
+    
     public partial class ConnectWindow : Window
     {
-        public ConnectWindow()
+        private List<IStorage> cloudlist;
+        public ConnectWindow(List<IStorage> _list)
         {
             InitializeComponent();
+            cloudlist = _list;
         }
 
         private void CloudLogin(object sender, RoutedEventArgs e)
         {
-            
+            IStorage cloud;
+
+            if (cloudType.Text == "Google Drive")
+                cloud = new Mycloud.GoogleDrive("", "");
+            else
+                cloud = new Mycloud.Dropbox("", "");
+            cloudlist.Add(cloud);
         }
     }
 }
