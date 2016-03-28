@@ -25,9 +25,9 @@ namespace Mycloud
         private const int KB = 0x400;
         private const int DownloadChunkSize = 256 * KB;
 
-        public void Connect()
+        public void Connect(string userName, string password)
         {
-            _credentials = GetInstalledApplicationCredentials();
+            _credentials = GetInstalledApplicationCredentials(userName, password);
 
             _service = new StorageService(
                 new BaseClientService.Initializer()
@@ -37,14 +37,12 @@ namespace Mycloud
                 });
         }
 
-        public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials()
+        public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials(string userName, string password)
         {
             var secrets = new ClientSecrets
             {
-                // TODO: récupérer les infos de connexion via une fenêtre
-                ClientId = "YOUR_CLIENT_ID.apps.googleusercontent.com",
-                ClientSecret = "YOUR_CLIENT_SECRET"
-            };
+                ClientId = userName,
+                ClientSecret = password};
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
                 secrets, new[] { StorageService.Scope.DevstorageFullControl },
                 Environment.UserName, new CancellationTokenSource().Token)
