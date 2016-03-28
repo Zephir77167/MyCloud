@@ -27,6 +27,11 @@ namespace Mycloud
         private const int KB = 0x400;
         private const int DownloadChunkSize = 256 * KB;
 
+        public GoogleDrive(string userName, string password)
+        {
+            Connect(userName, password);
+        }
+
         public void Connect(string userName, string password)
         {
             _credentials = GetInstalledApplicationCredentials(userName, password);

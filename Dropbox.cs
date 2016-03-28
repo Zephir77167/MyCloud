@@ -14,6 +14,11 @@ namespace Mycloud
         private List<string> _folders = new List<string>();
         private List<string> _files = new List<string>();
 
+        public Dropbox(string userName, string password)
+        {
+            Connect(userName, password);
+        }
+
         public void Connect(string userName, string password)
         {
             _credentials = new DropboxClient("YOUR ACCESS TOKEN");
