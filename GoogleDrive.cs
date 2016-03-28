@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading;
 using MyCloud;
 using System.Threading.Tasks;
+using Google.Apis.Drive.v2;
+using Google.Apis.Util.Store;
 
 namespace Mycloud
 {
@@ -39,13 +41,22 @@ namespace Mycloud
 
         public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials(string userName, string password)
         {
+            //string[] scopes = new string[] { DriveService.Scope.Drive,
+            //                     DriveService.Scope.DriveFile};
+            var clientId = "113374830036-c6vu0c9c11p4l5a8p1c69d6gngrlv2q9.apps.googleusercontent.com";
+            var clientSecret = "A-7CN0F8Xwz9egABvDG-VKS1";
+
             var secrets = new ClientSecrets
             {
-                ClientId = userName,
-                ClientSecret = password};
+                ClientId = clientId,
+                ClientSecret = clientSecret
+            };
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
-                secrets, new[] { StorageService.Scope.DevstorageFullControl },
-                Environment.UserName, new CancellationTokenSource().Token)
+                secrets,
+                new[] { StorageService.Scope.DevstorageFullControl },
+                Environment.UserName,
+                CancellationToken.None,
+                new FileDataStore("MyCloud.GoogleDrive.Auth.Store"))
                 .Result;
         }
 
