@@ -31,8 +31,8 @@ namespace Mycloud
         {
             _folders.Clear();
 
-            var task = Task.Run((Func<Task>)Dropbox.ListFolderIn);
-            task.Wait();
+            //var task = Task.Run((Func<Task>)Dropbox.ListFolderIn);
+            //task.Wait();
 
             return (_folders);
         }
@@ -53,8 +53,8 @@ namespace Mycloud
         {
             _files.Clear();
 
-            var task = Task.Run((Func<Task>)Dropbox.ListFilesIn);
-            task.Wait();
+            //var task = Task.Run((Func<Task>)Dropbox.ListFilesIn);
+            //task.Wait();
 
             return (_files);
         }
@@ -85,8 +85,8 @@ namespace Mycloud
 
         public void DownloadFile(string file)
         {
-            var task = Task.Run((Func<Task>)Dropbox.Download);
-            task.Wait();
+            //var task = Task.Run((Func<Task>)Dropbox.Download);
+            //task.Wait();
         }
 
         async Task Download(DropboxClient dbx, string folder, string file)
