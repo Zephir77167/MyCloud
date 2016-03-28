@@ -10,32 +10,23 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-
-using System.IO;
-using System.Collections.ObjectModel;
-
 
 namespace MyCloud
 {
     /// <summary>
-    /// Logique d'interaction pour MainWindow.xaml
+    /// Logique d'interaction pour Window1.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ConnectWindow : Window
     {
-
-        public MainWindow()
+        public ConnectWindow()
         {
             InitializeComponent();
         }
-        private void CloudConnect(object sender, RoutedEventArgs e)
-        {
-            ConnectWindow loginBox = new ConnectWindow();
-            loginBox.Show();
 
+        private void CloudLogin(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
-
 }

@@ -1,0 +1,31 @@
+﻿<Window x:Class="MyCloud.ConnectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyCloud"
+        mc:Ignorable="d"
+        Title="Ajout d'un Cloud" Height="202" Width="300" ResizeMode="NoResize">
+    <Grid>
+        <Label Content="Platforme cloud" HorizontalAlignment="Left" Margin="32,22,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cloudType" HorizontalAlignment="Left" Margin="131,22,0,0" VerticalAlignment="Top" Width="128">
+            <ComboBoxItem>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/googledrive.png" Margin="0, 0, 6, 0"/>
+                    <TextBlock>Google Drive</TextBlock>
+                </StackPanel>
+            </ComboBoxItem>
+            <ComboBoxItem>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/dropbox.png" Margin="0, 0, 6, 0"/>
+                    <TextBlock>DropBox</TextBlock>
+                </StackPanel>
+            </ComboBoxItem>
+        </ComboBox>
+        <Label Content="Nom d'utilisateur" HorizontalAlignment="Left" Margin="24,46,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="login" HorizontalAlignment="Left" Height="23" Margin="131,49,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="128"/>
+        <Label Content="Mots de passe" HorizontalAlignment="Left" Margin="39,71,0,0" VerticalAlignment="Top"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="131,77,0,0" VerticalAlignment="Top" Width="128"/>
+        <Button Click="CloudLogin" Content="Connexion" HorizontalAlignment="Left" Height="27" Margin="79,119,0,0" VerticalAlignment="Top" Width="130"/>
+    </Grid>
+</Window>
