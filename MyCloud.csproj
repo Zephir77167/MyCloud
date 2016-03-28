@@ -198,6 +198,18 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\binary.png" />
+    <Resource Include="Resources\cancel.png" />
+    <Resource Include="Resources\disconnect.png" />
+    <Resource Include="Resources\file.png" />
+    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\homefolder.png" />
+    <Resource Include="Resources\refresh.png" />
+    <Resource Include="Resources\remotetreeview.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

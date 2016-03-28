@@ -6,7 +6,79 @@
         xmlns:local="clr-namespace:MyCloud"
         mc:Ignorable="d"
         Title="MyCloud" Height="800" Width="1000">
-    <Grid>
-        
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"  x:Name="menuBar"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Fichier">
+                    <MenuItem x:Name="openButton" Header="_Ouvrir"/>
+                    <MenuItem x:Name="closeButton" Header="_Fermer"/>
+                    <Separator />
+                    <MenuItem x:Name="quitButton" Header="_Quitter"/>
+                </MenuItem>
+                <MenuItem Header="_Aide">
+                    <MenuItem x:Name="aboutUsButton" Header="_A propos de MyCloud"/>
+                </MenuItem>
+            </Menu>
+            <StackPanel>
+            </StackPanel>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="330" x:Name="playListPanel"/>
+                    <ColumnDefinition Width="2"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="36" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <DockPanel Grid.Row="0">
+                            <Button x:Name="cloudRepoAdd" Margin="10,3,0,3">
+                                <Image Source="Resources/add.png"/>
+                            </Button>
+                            <Button x:Name="cloudRepoSuppr" Margin="10,3,0,3">
+                                <Image Source="Resources/cancel.png"/>
+                            </Button>
+                            <Button x:Name="cloudRefresh" Margin="10,3,0,3">
+                                <Image Source="Resources/refresh.png"/>
+                            </Button>
+                            <Button x:Name="cloudDisconnect" Margin="10,3,0,3"  HorizontalAlignment="Right">
+                                <Image Source="Resources/disconnect.png"/>
+                            </Button>
+                        </DockPanel>
+                        <DockPanel Grid.Row="1">
+                            <ListView x:Name="list" Margin="2"  ItemsSource="{Binding Path=MyCloud.cloudRepo}">
+                                <ListView.View>
+                                    <GridView  AllowsColumnReorder="True" ColumnHeaderToolTip="Cloud directory">
+                                        <GridViewColumn Header="Host" DisplayMemberBinding="{Binding Path=Host}"/>
+                                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </DockPanel>
+                    </Grid>
+                </DockPanel>
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+                <DockPanel x:Name="PlayerCanvas" Grid.Column="2" Background="Black" OpacityMask="Black" MinWidth="360" MinHeight="240">
+                    <TreeView x:Name="directoryExplorer">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type local:DirectoryObject}" ItemsSource="{Binding Items}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding icone}" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding name}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>

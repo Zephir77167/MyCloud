@@ -13,6 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
+using System.IO;
+using System.Collections.ObjectModel;
+
+
 namespace MyCloud
 {
     /// <summary>
@@ -23,6 +28,40 @@ namespace MyCloud
         public MainWindow()
         {
             InitializeComponent();
+
+            directoryExplorer.Items.Add(
+                new DirectoryObject()
+                {
+                    name = "dossier",
+                    isDirectory = true,
+                    Items = new ObservableCollection<DirectoryObject>()
+                    {
+                        new DirectoryObject() {name = "fichier1", isDirectory = false},
+                        new DirectoryObject() {name = "porn", isDirectory = false}
+                    }
+                }
+            );
         }
     }
+    public class DirectoryObject
+    {
+        public DirectoryObject()
+        {
+            this.Items = new ObservableCollection<DirectoryObject>();
+            if (this.isDirectory)
+            {
+                this.icone = "Resources/folder.png";
+            }
+            else {
+                this.icone = "Resources/folder.png";
+            }
+        }
+
+        public bool isDirectory { get; set; }
+        public string name { get; set; }
+        private string icone { get; set; }
+
+        public ObservableCollection<DirectoryObject> Items { get; set; }
+    }
+
 }
