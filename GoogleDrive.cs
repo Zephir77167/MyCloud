@@ -145,7 +145,8 @@ namespace Mycloud
                     _currFolder = folder.Id;
                 }
             }
-            
+
+            UpdateFileAndFolderList();
         }
 
         public void GoBackToParent()
@@ -162,6 +163,8 @@ namespace Mycloud
             {
                 Console.WriteLine("An error occurred: " + e.Message);
             }
+
+            UpdateFileAndFolderList();
         }
 
         public bool DownloadFile(string fileName)
