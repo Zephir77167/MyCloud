@@ -30,7 +30,7 @@ namespace MyCloud
         public MainWindow()
         {
             InitializeComponent();
-          
+            cloudList = new List<IStorage>();
             cloudItemList.ItemsSource = cloudList;
         }
         private void CloudConnect(object sender, RoutedEventArgs e)
