@@ -27,7 +27,6 @@ namespace Mycloud
         public Dropbox()
         {
             icone = "Resources/dropbox.png";
-            name = "test DropBox cloud";
             Connect();
         }
 
@@ -54,6 +53,7 @@ namespace Mycloud
 
             // Get account info
             var accountInfo = await client.Core.Accounts.AccountInfoAsync();
+            name = accountInfo.display_name;
             Console.WriteLine("Uid: " + accountInfo.uid);
             Console.WriteLine("Display_name: " + accountInfo.display_name);
             Console.WriteLine("Email: " + accountInfo.email);
