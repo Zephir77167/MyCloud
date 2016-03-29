@@ -23,6 +23,7 @@ namespace MyCloud
     /// </summary>
     public partial class MainWindow : Window
     {
+        public IStorage currentCloud { get; set; }
         public ObservableCollection<IStorage> cloudList { get; set; }
         public ObservableCollection<DirectoryObject> directoryList { get; set; }
 
@@ -50,12 +51,12 @@ namespace MyCloud
         }
         private void CloudRefresh(object sender, RoutedEventArgs e)
         {
-            if (cloudItemList.SelectedItem != null)
-                DirectoryRefreshFromCloud(cloudList[cloudItemList.SelectedIndex]);
+            DirectoryRefreshFromCloud(currentCloud);
         }
 
         public void DirectoryRefreshFromCloud(IStorage cloud)
         {
+            cloud.UpdateFileAndFolderList();
             directoryList.Clear();
             List<string> folders = cloud.GetFolderList();
             foreach (string folderName in folders)
@@ -69,6 +70,31 @@ namespace MyCloud
         private void CloudSuppr(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void directoryItem_clicked(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                var elem = item.Content as DirectoryObject;
+                if (elem.type == DirectoryObject.objectType.File)
+                    currentCloud.DownloadFile(elem.name);
+                else if (elem.type == DirectoryObject.objectType.Folder)
+                    currentCloud.GoToFolder(elem.name);
+                else if (elem.type == DirectoryObject.objectType.ReactiveName && elem.name == "..")
+                    currentCloud.GoBackToParent();
+            }
+        }
+
+        private void cloudItem_clicked(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                currentCloud = item.Content as IStorage;
+                DirectoryRefreshFromCloud(currentCloud);
+            }
         }
 
         public class DirectoryObject : INotifyPropertyChanged

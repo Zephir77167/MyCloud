@@ -69,6 +69,11 @@
                                         </GridViewColumn>
                                     </GridView>
                                 </ListView.View>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="cloudItem_clicked" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                             </ListView>
                         </DockPanel>
                     </Grid>
@@ -92,6 +97,11 @@
                                 <GridViewColumn Header="Taille" DisplayMemberBinding="{Binding Path=size}"/>
                             </GridView>
                         </ListView.View>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="directoryItem_clicked" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
                 </DockPanel>
             </Grid>
