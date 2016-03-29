@@ -23,8 +23,6 @@
                     <MenuItem x:Name="aboutUsButton" Header="_A propos de MyCloud"/>
                 </MenuItem>
             </Menu>
-            <StackPanel>
-            </StackPanel>
         </DockPanel>
         <DockPanel Grid.Row="1">
             <Grid>

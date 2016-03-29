@@ -123,6 +123,7 @@ namespace MyCloud
             public string lastModifDate { get; set; }
             public string icone { get; set; }
         }
+
     }
 
 }
