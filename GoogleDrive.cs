@@ -29,10 +29,13 @@ namespace Mycloud
 
         private const int KB = 0x400;
         private const int DownloadChunkSize = 256 * KB;
-
-        public GoogleDrive(string userName, string password)
+        public string icone { get; set; }
+        public string name { get; set; }
+        public GoogleDrive()
         {
-            Connect(userName, password);
+            icone = "Resources/googledrive.png";
+            name = "test GoogleDrive cloud";
+            Connect();
         }
 
         public void Connect()

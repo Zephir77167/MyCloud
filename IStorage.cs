@@ -8,6 +8,8 @@ namespace MyCloud
 {
     public interface IStorage
     {
+        string icone { get; set; }
+        string name { get; set; }
         void Connect();
         void UpdateFileAndFolderList();
         List<string> GetFolderList();

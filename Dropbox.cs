@@ -13,9 +13,12 @@ namespace Mycloud
         private string _path = string.Empty;
         private List<string> _folders = new List<string>();
         private List<string> _files = new List<string>();
-
+        public string icone { get; set; }
+        public string name { get; set; }
         public Dropbox()
         {
+            icone = "Resources/dropbox.png";
+            name = "test DropBox cloud";
             Connect();
         }
 
