@@ -12,7 +12,9 @@ using System.Text;
 using System.Threading;
 using MyCloud;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 using Google.Apis.Drive.v2;
+using Google.Apis.Drive.v2.Data;
 using Google.Apis.Util.Store;
 
 namespace Mycloud
@@ -20,9 +22,10 @@ namespace Mycloud
     public class GoogleDrive : IStorage
     {
         private IConfigurableHttpClientInitializer _credentials;
-        private StorageService _service;
-        private string _path = string.Empty;
-        private string _bucket = "";
+        private DriveService _service;
+        private string _currFolder = "root";
+        private List<Google.Apis.Drive.v2.Data.File> _folders = new List<Google.Apis.Drive.v2.Data.File>();
+        private List<Google.Apis.Drive.v2.Data.File> _files = new List<Google.Apis.Drive.v2.Data.File>();
 
         private const int KB = 0x400;
         private const int DownloadChunkSize = 256 * KB;
@@ -36,7 +39,7 @@ namespace Mycloud
         {
             _credentials = GetInstalledApplicationCredentials(userName, password);
 
-            _service = new StorageService(
+            _service = new DriveService(
                 new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = _credentials,
@@ -46,8 +49,8 @@ namespace Mycloud
 
         public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials(string userName, string password)
         {
-            //string[] scopes = new string[] { DriveService.Scope.Drive,
-            //                     DriveService.Scope.DriveFile};
+            string[] scopes = new string[] { DriveService.Scope.Drive,
+                                 DriveService.Scope.DriveFile};
             var clientId = "113374830036-c6vu0c9c11p4l5a8p1c69d6gngrlv2q9.apps.googleusercontent.com";
             var clientSecret = "A-7CN0F8Xwz9egABvDG-VKS1";
 
@@ -58,130 +61,143 @@ namespace Mycloud
             };
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
                 secrets,
-                new[] { StorageService.Scope.DevstorageFullControl },
+                scopes,
                 Environment.UserName,
                 CancellationToken.None,
-                new FileDataStore("MyCloud.GoogleDrive.Auth.Store"))
+                new FileDataStore("MyCloud.GoogleDrive.Auth.Store." + Guid.NewGuid()))
                 .Result;
         }
 
-        public List<string> GetBucketList()
+        public void UpdateFileAndFolderList()
         {
-            List<string> buckets = new List<string>();
+            _files.Clear();
+            ChildrenResource.ListRequest request = _service.Children.List(_currFolder);
 
-            return (buckets);
+            do
+            {
+                try
+                {
+                    ChildList children = request.Execute();
+
+                    foreach (ChildReference child in children.Items)
+                    {
+                        try
+                        {
+                            Google.Apis.Drive.v2.Data.File file = _service.Files.Get(child.Id).Execute();
+
+                            if (file.MimeType == "application/vnd.google-apps.file")
+                            {
+                                _files.Add(file);
+                            }
+                            else if (file.MimeType == "application/vnd.google-apps.folder")
+                            {
+                                _folders.Add(file);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("An error occurred: " + e.Message);
+                        }
+                    }
+                    request.PageToken = children.NextPageToken;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("An error occurred: " + e.Message);
+                    request.PageToken = null;
+                }
+            } while (!String.IsNullOrEmpty(request.PageToken));
         }
 
         public List<string> GetFolderList()
         {
             List<string> folders = new List<string>();
 
+            foreach (Google.Apis.Drive.v2.Data.File folder in _folders)
+            {
+                folders.Add(folder.Title);
+            }
+
             return (folders);
         }
 
         public List<string> GetFileList()
         {
-            List<string> files = new List<string>();
+            List<string>    files = new List<string>();
+
+            foreach (Google.Apis.Drive.v2.Data.File file in _files)
+            {
+                files.Add(file.Title);
+            }
 
             return (files);
         }
 
-        public void GoToFolder(string folder)
+        public void GoToFolder(string folderName)
         {
-            _path += "/" + folder;
+            foreach (var folder in _folders)
+            {
+                if (folder.Title == folderName)
+                {
+                    _currFolder = folder.Id;
+                }
+            }
+            
         }
 
         public void GoBackToParent()
         {
-            int index = _path.LastIndexOf('/');
+            ParentsResource.ListRequest request = _service.Parents.List(_currFolder);
 
-            _path = ((index == -1) ? (string.Empty) : (_path.Substring(0, index)));
+            try
+            {
+                ParentList parents = request.Execute();
+
+                _currFolder = parents.Items[0].Id;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: " + e.Message);
+            }
         }
 
-        public void DownloadFile(string file)
+        public bool DownloadFile(string fileName)
         {
-            var req = _service.Objects.Get(_bucket, _path + "/" + file);
-            Google.Apis.Storage.v1.Data.Object readobj = req.Execute();
+            Google.Apis.Drive.v2.Data.File fileToDownload = null;
 
-            Console.WriteLine("Object MediaLink: " + readobj.MediaLink);
-
-            // download using Google.Apis.Download and display the progress
-            string pathUser = Environment.GetFolderPath(
-                Environment.SpecialFolder.UserProfile);
-            var fileName = Path.Combine(pathUser, "Downloads") + "\\"
-                + readobj.Name;
-            Console.WriteLine("Starting download to " + fileName);
-            var downloader = new MediaDownloader(_service)
+            foreach (var file in _files)
             {
-                ChunkSize = DownloadChunkSize
-            };
-            // add a delegate for the progress changed event for writing to
-            // console on changes
-            downloader.ProgressChanged += progress =>
-                Console.WriteLine(progress.Status + " "
-                + progress.BytesDownloaded + " bytes");
-
-            using (var fileStream = new System.IO.FileStream(fileName,
-                System.IO.FileMode.Create, System.IO.FileAccess.Write))
-            {
-                var progress =
-                    downloader.Download(readobj.MediaLink, fileStream);
-                if (progress.Status == DownloadStatus.Completed)
+                if (file.Title == fileName)
                 {
-                    Console.WriteLine(readobj.Name
-                        + " was downloaded successfully");
-                }
-                else
-                {
-                    Console.WriteLine("Download {0} was interrupted. Only {1} "
-                    + "were downloaded. ",
-                        readobj.Name, progress.BytesDownloaded);
+                    fileToDownload = file;
                 }
             }
-            Console.WriteLine("=============================");
-        }
 
-        public void Sample() // code pour piocher
-        {
-            string projectId = "";
-            string bucketName = "";
-
-            Console.WriteLine("List of buckets in current project");
-            // TODO: c'est quoi projectId ? -> le récup
-            Buckets buckets = _service.Buckets.List(projectId).Execute();
-
-            foreach (var bucket in buckets.Items)
+            if (fileToDownload == null)
             {
-                Console.WriteLine(bucket.Name);
+                return (false);
             }
 
-            // TODO: choisir un bucketName
-
-            Console.WriteLine("Total number of items in bucket: "
-                + buckets.Items.Count);
-            Console.WriteLine("=============================");
-
-            // using Google.Apis.Storage.v1.Data.Object to disambiguate from
-            // System.Object
-            Google.Apis.Storage.v1.Data.Object fileobj =
-                new Google.Apis.Storage.v1.Data.Object()
+            if (!String.IsNullOrEmpty(fileToDownload.DownloadUrl))
+            {
+                try
                 {
-                    Name = "somefile.txt"
-                };
-
-            Console.WriteLine("Creating " + fileobj.Name + " in bucket "
-                + bucketName);
-            byte[] msgtxt = Encoding.UTF8.GetBytes("Lorem Ipsum");
-
-            _service.Objects.Insert(fileobj, bucketName,
-                new MemoryStream(msgtxt), "text/plain").Upload();
-
-            Console.WriteLine("Object created: " + fileobj.Name);
-
-            Console.WriteLine("=============================");
-
-            Console.WriteLine("Reading object " + fileobj.Name + " in bucket: "
-                + bucketName);
+                    var x = _service.HttpClient.GetByteArrayAsync(fileToDownload.DownloadUrl);
+                    byte[] arrBytes = x.Result;
+                    System.IO.File.WriteAllBytes("./", arrBytes);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("An error occurred: " + e.Message);
+                    return false;
+                }
+            }
+            else
+            {
+                // The file doesn't have any content stored on Drive.
+                return false;
+            }
         }
     }
 }

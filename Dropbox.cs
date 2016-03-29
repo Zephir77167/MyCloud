@@ -24,6 +24,11 @@ namespace Mycloud
             _credentials = new DropboxClient("YOUR ACCESS TOKEN");
         }
 
+        public void UpdateFileAndFolderList()
+        {
+            
+        }
+
         public List<string> GetBucketList()
         {
             List<string> buckets = new List<string>();
@@ -75,9 +80,9 @@ namespace Mycloud
             }
         }
 
-        public void GoToFolder(string folder)
+        public void GoToFolder(string folderName)
         {
-            _path += "/" + folder;
+            _path += "/" + folderName;
         }
 
         public void GoBackToParent()
@@ -87,10 +92,12 @@ namespace Mycloud
             _path = ((index == -1) ? (string.Empty) : (_path.Substring(0, index)));
         }
 
-        public void DownloadFile(string file)
+        public bool DownloadFile(string file)
         {
             //var task = Task.Run((Func<Task>)Dropbox.Download);
             //task.Wait();
+
+            return (true);
         }
 
         async Task Download(DropboxClient dbx, string folder, string file)

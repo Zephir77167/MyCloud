@@ -9,11 +9,11 @@ namespace MyCloud
     public interface IStorage
     {
         void Connect(string userName, string password);
-        List<string> GetBucketList();
+        void UpdateFileAndFolderList();
         List<string> GetFolderList();
         List<string> GetFileList();
-        void GoToFolder(string folder);
+        void GoToFolder(string folderName);
         void GoBackToParent();
-        void DownloadFile(string file);
+        bool DownloadFile(string file);
     }
 }
