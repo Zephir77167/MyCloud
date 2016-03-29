@@ -11,6 +11,7 @@ using Dropbox.Api.Files;
 using Dropbox.Api.Team;
 using System.Threading;
 using DropboxRestAPI;
+using Nito.AsyncEx;
 
 namespace Mycloud
 {
@@ -18,8 +19,10 @@ namespace Mycloud
     {
         private const string apiKey = "eo9ia55b510q9tr";
         private const string apiSecretKey = "vo6zz2nxo15jxkf";
-        
-        private string _path = string.Empty;
+
+        private DropboxRestAPI.Models.Core.MetaData _directoryList;
+        private DropboxRestAPI.Client _client;
+        private string _path = "/";
         private List<string> _folders = new List<string>();
         private List<string> _files = new List<string>();
         public string icone { get; set; }
@@ -27,10 +30,15 @@ namespace Mycloud
         public Dropbox()
         {
             icone = "Resources/dropbox.png";
-            Connect();
+            AsyncContext.Run(Connecting);
         }
 
-        public async void Connect()
+        public void Connect()
+        {
+            AsyncContext.Run(Connecting);
+        }
+
+        private async Task Connecting()
         {
             var options = new DropboxRestAPI.Options
             {
@@ -39,36 +47,28 @@ namespace Mycloud
                 RedirectUri = "http://localhost/mycloud"
             };
 
-            // Initialize a new Client (without an AccessToken)
-            var client = new DropboxRestAPI.Client(options);
-            // Get the OAuth Request Url
-            var authRequestUrl = client.Core.OAuth2.Authorize("code");
+
+            _client = new DropboxRestAPI.Client(options);
+            var authRequestUrl = _client.Core.OAuth2.Authorize("code");
 
             var connectWindow = new DropBoxConnect(options, authRequestUrl.AbsoluteUri);
             connectWindow.ShowDialog();
             if (!connectWindow.Result)
                 return;
-            // Exchange the Authorization Code with Access/Refresh tokens
-            var token = await client.Core.OAuth2.TokenAsync(connectWindow.authorizeCodeUrl);
+
+            var token = await _client.Core.OAuth2.TokenAsync(connectWindow.authorizeCodeUrl);
 
             // Get account info
-            var accountInfo = await client.Core.Accounts.AccountInfoAsync();
-            name = accountInfo.display_name;
+            var accountInfo = await _client.Core.Accounts.AccountInfoAsync();
+            name = accountInfo.email;
             Console.WriteLine("Uid: " + accountInfo.uid);
             Console.WriteLine("Display_name: " + accountInfo.display_name);
             Console.WriteLine("Email: " + accountInfo.email);
 
             // Get root folder without content
-            var rootFolder = await client.Core.Metadata.MetadataAsync("/", list: false);
+            var rootFolder = await _client.Core.Metadata.MetadataAsync("/", list: false);
             Console.WriteLine("Root Folder: {0} (Id: {1})", rootFolder.Name, rootFolder.path);
-
-            // Get root folder with content
-            rootFolder = await client.Core.Metadata.MetadataAsync("/", list: true);
-            foreach (var folder in rootFolder.contents)
-            {
-                Console.WriteLine(" -> {0}: {1} (Id: {2})",
-                    folder.is_dir ? "Folder" : "File", folder.Name, folder.path);
-            }
+            GetRemoteDirectory();
             /*
             // Initialize a new Client (with an AccessToken)
             var client2 = new DropboxRestAPI.Client(options);
@@ -102,25 +102,22 @@ namespace Mycloud
             */
         }
 
-        public void UpdateFileAndFolderList()
+        public async Task GetRemoteDirectory()
         {
-            
+            _directoryList = await _client.Core.Metadata.MetadataAsync(_path, list: true);
         }
 
-        public List<string> GetBucketList()
-        {
-            List<string> buckets = new List<string>();
-
-            return (buckets);
-        }
 
         public List<string> GetFolderList()
         {
             _folders.Clear();
-
-            //var task = Task.Run((Func<Task>)Dropbox.ListFolderIn);
-            //task.Wait();
-
+            if (_directoryList == null)
+                return _folders;
+            foreach (var folders in _directoryList.contents)
+            {
+                if (folders.is_dir)
+                    _folders.Add(folders.Name);
+            }
             return (_folders);
         }
 
@@ -128,35 +125,55 @@ namespace Mycloud
         public List<string> GetFileList()
         {
             _files.Clear();
-
-            //var task = Task.Run((Func<Task>)Dropbox.ListFilesIn);
-            //task.Wait();
-
+            if (_directoryList == null)
+                return _files;
+            foreach (var file in _directoryList.contents)
+            {
+                if (!file.is_dir)
+                   _files.Add(file.Name);
+            }
             return (_files);
         }
 
-
-
         public void GoToFolder(string folderName)
         {
-            _path += "/" + folderName;
+            foreach (var folder in _folders)
+            {
+                if (folder == folderName)
+                {
+                    if (_path != "/")
+                        _path += "/";
+                    _path += folder;
+                }
+            }
         }
 
         public void GoBackToParent()
         {
+            if (_path == "/")
+                return;
             int index = _path.LastIndexOf('/');
-
-            _path = ((index == -1) ? (string.Empty) : (_path.Substring(0, index)));
+            _path = ((index == -1) ? _path : (_path.Substring(0, index)));
         }
 
         public bool DownloadFile(string file, string downloadPath)
         {
-            //var task = Task.Run((Func<Task>)Dropbox.Download);
-            //task.Wait();
-
+            DownloadFileAsync(_path + file, downloadPath + "\\"+ file);
             return (true);
         }
 
+        public async void DownloadFileAsync(string file, string downloadPath)
+        {
+            var fileStream = System.IO.File.OpenWrite(downloadPath);
+            await _client.Core.Metadata.FilesAsync(file, fileStream);
+            fileStream.Close();
+        }
+
+        public void UpdateFileAndFolderList()
+        {
+            GetRemoteDirectory();
+            //AsyncContext.Run(GetRemoteDirectory);
+        }
 
     }
 }
