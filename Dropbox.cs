@@ -2,26 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dropbox.Api;
 using MyCloud;
+using DropNet;
 
 namespace Mycloud
 {
     public class Dropbox : IStorage
     {
-        private DropboxClient _credentials;
+        private DropNetClient _client;
         private string _path = string.Empty;
         private List<string> _folders = new List<string>();
         private List<string> _files = new List<string>();
 
-        public Dropbox(string userName, string password)
+        public Dropbox()
         {
-            Connect(userName, password);
+            Connect();
         }
 
-        public void Connect(string userName, string password)
+        public void Connect()
         {
-            _credentials = new DropboxClient("YOUR ACCESS TOKEN");
+            try {
+                _client = new DropNetClient("eo9ia55b510q9tr", "eo9ia55b510q9tr");
+                _client.GetToken();
+                var authorizeUrl = _client.BuildAuthorizeUrl();
+
+                System.Diagnostics.Process.Start(authorizeUrl);
+            }
+            catch (DropNet.Exceptions.DropboxRestException e) {
+            }
         }
 
         public void UpdateFileAndFolderList()
@@ -46,17 +54,6 @@ namespace Mycloud
             return (_folders);
         }
 
-        async Task ListFolderIn() // string.empty to list in root
-        {
-            var list = await _credentials.Files.ListFolderAsync(_path);
-
-            foreach (var item in list.Entries.Where(i => i.IsFolder))
-            {
-                _folders.Add(item.Name);
-                // tmp
-                Console.WriteLine("D  {0}/", item.Name);
-            }
-        }
 
         public List<string> GetFileList()
         {
@@ -68,17 +65,7 @@ namespace Mycloud
             return (_files);
         }
 
-        async Task ListFilesIn() // string.Empty to list in root
-        {
-            var list = await _credentials.Files.ListFolderAsync(_path);
 
-            foreach (var item in list.Entries.Where(i => i.IsFile))
-            {
-                _files.Add(item.Name);
-                // tmp
-                Console.WriteLine("F{0,8} {1}", item.AsFile.Size, item.Name);
-            }
-        }
 
         public void GoToFolder(string folderName)
         {
@@ -100,13 +87,6 @@ namespace Mycloud
             return (true);
         }
 
-        async Task Download(DropboxClient dbx, string folder, string file)
-        {
-            using (var response = await dbx.Files.DownloadAsync(folder + "/" + file))
-            {
-                // tmp
-                Console.WriteLine(await response.GetContentAsStringAsync());
-            }
-        }
+
     }
 }

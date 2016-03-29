@@ -35,9 +35,9 @@ namespace Mycloud
             Connect(userName, password);
         }
 
-        public void Connect(string userName, string password)
+        public void Connect()
         {
-            _credentials = GetInstalledApplicationCredentials(userName, password);
+            _credentials = GetInstalledApplicationCredentials();
 
             _service = new DriveService(
                 new BaseClientService.Initializer()
@@ -47,7 +47,7 @@ namespace Mycloud
                 });
         }
 
-        public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials(string userName, string password)
+        public IConfigurableHttpClientInitializer GetInstalledApplicationCredentials()
         {
             string[] scopes = new string[] { DriveService.Scope.Drive,
                                  DriveService.Scope.DriveFile};
