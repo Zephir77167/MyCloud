@@ -149,7 +149,7 @@ namespace Mycloud
             _path = ((index == -1) ? (string.Empty) : (_path.Substring(0, index)));
         }
 
-        public bool DownloadFile(string file)
+        public bool DownloadFile(string file, string downloadPath)
         {
             //var task = Task.Run((Func<Task>)Dropbox.Download);
             //task.Wait();

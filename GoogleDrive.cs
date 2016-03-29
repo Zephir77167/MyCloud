@@ -24,6 +24,7 @@ namespace Mycloud
         private IConfigurableHttpClientInitializer _credentials;
         private DriveService _service;
         private string _currFolder = "root";
+        private string _root = "root";
         private List<Google.Apis.Drive.v2.Data.File> _folders = new List<Google.Apis.Drive.v2.Data.File>();
         private List<Google.Apis.Drive.v2.Data.File> _files = new List<Google.Apis.Drive.v2.Data.File>();
 
@@ -34,8 +35,22 @@ namespace Mycloud
         public GoogleDrive()
         {
             icone = "Resources/googledrive.png";
-            name = "test GoogleDrive cloud";
             Connect();
+
+            try
+            {
+                About about = _service.About.Get().Execute();
+
+                name = about.Name;
+                _currFolder = about.RootFolderId;
+                _root = _currFolder;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: " + e.Message);
+            }
+
+            UpdateFileAndFolderList();
         }
 
         public void Connect()
@@ -74,6 +89,8 @@ namespace Mycloud
         public void UpdateFileAndFolderList()
         {
             _files.Clear();
+            _folders.Clear();
+
             ChildrenResource.ListRequest request = _service.Children.List(_currFolder);
 
             do
@@ -151,6 +168,11 @@ namespace Mycloud
 
         public void GoBackToParent()
         {
+            if (_currFolder == _root)
+            {
+                return;
+            }
+
             ParentsResource.ListRequest request = _service.Parents.List(_currFolder);
 
             try
@@ -167,7 +189,7 @@ namespace Mycloud
             UpdateFileAndFolderList();
         }
 
-        public bool DownloadFile(string fileName)
+        public bool DownloadFile(string fileName, string downloadPath)
         {
             Google.Apis.Drive.v2.Data.File fileToDownload = null;
 
@@ -190,7 +212,7 @@ namespace Mycloud
                 {
                     var x = _service.HttpClient.GetByteArrayAsync(fileToDownload.DownloadUrl);
                     byte[] arrBytes = x.Result;
-                    System.IO.File.WriteAllBytes("./", arrBytes);
+                    System.IO.File.WriteAllBytes(downloadPath, arrBytes);
                     return true;
                 }
                 catch (Exception e)
