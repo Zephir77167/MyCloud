@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows.Forms;
+using ListViewItem = System.Windows.Controls.ListViewItem;
 
 
 namespace MyCloud
@@ -76,7 +67,15 @@ namespace MyCloud
             {
                 var elem = item.Content as DirectoryObject;
                 if (elem.type == DirectoryObject.objectType.File)
-                    currentCloud.DownloadFile(elem.name);
+                {
+                    FolderBrowserDialog fbd = new FolderBrowserDialog();
+                    DialogResult result = fbd.ShowDialog();
+
+                    if (currentCloud.DownloadFile(elem.name, fbd.SelectedPath))
+                    {
+                        System.Windows.Forms.MessageBox.Show(elem.name + " a été téléchargé dans " + fbd.SelectedPath, "Succès", MessageBoxButtons.OK);
+                    }
+                }
                 else
                 {
                     if (elem.type == DirectoryObject.objectType.Folder)
@@ -84,7 +83,7 @@ namespace MyCloud
                     else if (elem.type == DirectoryObject.objectType.ReactiveName && elem.name == "..")
                         currentCloud.GoBackToParent();
                     else
-                        return ;
+                        return;
                     DirectoryRefreshFromCloud(currentCloud);
                 }
             }

@@ -192,6 +192,7 @@ namespace Mycloud
         public bool DownloadFile(string fileName, string downloadPath)
         {
             Google.Apis.Drive.v2.Data.File fileToDownload = null;
+            string downloadUrl;
 
             foreach (var file in _files)
             {
@@ -206,11 +207,13 @@ namespace Mycloud
                 return (false);
             }
 
-            if (!String.IsNullOrEmpty(fileToDownload.DownloadUrl))
+            if (!String.IsNullOrEmpty(downloadUrl = fileToDownload.DownloadUrl)
+                || !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/pdf"])
+                || !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/zip"]))
             {
                 try
                 {
-                    var x = _service.HttpClient.GetByteArrayAsync(fileToDownload.DownloadUrl);
+                    var x = _service.HttpClient.GetByteArrayAsync(downloadUrl);
                     byte[] arrBytes = x.Result;
                     System.IO.File.WriteAllBytes(downloadPath, arrBytes);
                     return true;

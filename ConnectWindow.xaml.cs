@@ -40,7 +40,7 @@ namespace MyCloud
             {
                 parent.cloudList.Add(cloud);
                 parent.currentCloud = cloud;
-                cloud.UpdateFileAndFolderList();
+                //cloud.UpdateFileAndFolderList();
                 parent.DirectoryRefreshFromCloud(cloud);
             }
             this.Close();
