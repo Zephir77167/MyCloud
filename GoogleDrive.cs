@@ -82,7 +82,7 @@ namespace Mycloud
                 scopes,
                 Environment.UserName,
                 CancellationToken.None,
-                new FileDataStore("MyCloud.GoogleDrive.Auth.Store." + Guid.NewGuid()))
+                new FileDataStore("MyCloud/MyCloud.GoogleDrive.Auth.Store." + Guid.NewGuid()))
                 .Result;
         }
 
