@@ -26,7 +26,7 @@ namespace MyCloud
         public ConnectWindow(MainWindow p)
         {
             InitializeComponent();
-            p = parent;
+            parent = p;
         }
 
         private void CloudLogin(object sender, RoutedEventArgs e)
