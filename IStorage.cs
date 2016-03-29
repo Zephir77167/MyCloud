@@ -12,8 +12,7 @@ namespace MyCloud
         string name { get; set; }
         void Connect();
         void UpdateFileAndFolderList();
-        List<string> GetFolderList();
-        List<string> GetFileList();
+        List<DirectoryObject> listDirectory();
         void GoToFolder(string folderName);
         void GoBackToParent();
         bool DownloadFile(string file, string downloadPath);

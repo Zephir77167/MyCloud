@@ -49,12 +49,9 @@ namespace MyCloud
             
             directoryList.Clear();
             directoryList.Add(new DirectoryObject("..", DirectoryObject.objectType.ReactiveName));
-            List<string> folders = cloud.GetFolderList();
-            foreach (string folderName in folders)
-                directoryList.Add(new DirectoryObject(folderName, DirectoryObject.objectType.Folder));
-            List<string> files = cloud.GetFileList();
-            foreach (string fileName in files)
-                directoryList.Add(new DirectoryObject(fileName, DirectoryObject.objectType.File));
+            List<DirectoryObject> itemList = cloud.listDirectory();
+            foreach (DirectoryObject item in itemList)
+                directoryList.Add(new DirectoryObject(item.name, item.type) { size=item.size, lastModifDate=item.lastModifDate});
         }
 
         private void CloudSuppr(object sender, RoutedEventArgs e)
@@ -104,31 +101,28 @@ namespace MyCloud
                 DirectoryRefreshFromCloud(currentCloud);
             }
         }
-
-        public class DirectoryObject
+    }
+    public class DirectoryObject
+    {
+        public enum objectType { Folder = 0, File, ReactiveName };
+        public DirectoryObject(string n, objectType t)
         {
-            public enum objectType { Folder = 0, File, ReactiveName };
-            public DirectoryObject(string n, objectType t)
-            {
-                type = t;
-                name = n;
-                var icones = new List<string>
+            type = t;
+            name = n;
+            var icones = new List<string>
                 {
                     "Resources/folder.png",
                     "Resources/file.png",
                     "Resources/sys.png"
                 };
-                
-                icone = icones[(int)type];
-            }
 
-            public string name { get; set; }
-            public objectType type { get; set; }
-            public string size { get; set; }
-            public string lastModifDate { get; set; }
-            public string icone { get; set; }
+            icone = icones[(int)type];
         }
 
+        public string name { get; set; }
+        public objectType type { get; set; }
+        public string size { get; set; }
+        public string lastModifDate { get; set; }
+        public string icone { get; set; }
     }
-
 }

@@ -23,8 +23,7 @@ namespace Mycloud
         private DropboxRestAPI.Models.Core.MetaData _directoryList;
         private DropboxRestAPI.Client _client;
         private string _path = "/";
-        private List<string> _folders = new List<string>();
-        private List<string> _files = new List<string>();
+        private List<DirectoryObject> _itemList = new List<DirectoryObject>();
         public string icone { get; set; }
         public string name { get; set; }
         public Dropbox()
@@ -58,17 +57,11 @@ namespace Mycloud
 
             var token = await _client.Core.OAuth2.TokenAsync(connectWindow.authorizeCodeUrl);
 
-            // Get account info
             var accountInfo = await _client.Core.Accounts.AccountInfoAsync();
             name = accountInfo.email;
-            Console.WriteLine("Uid: " + accountInfo.uid);
-            Console.WriteLine("Display_name: " + accountInfo.display_name);
-            Console.WriteLine("Email: " + accountInfo.email);
 
             // Get root folder without content
             var rootFolder = await _client.Core.Metadata.MetadataAsync("/", list: false);
-            Console.WriteLine("Root Folder: {0} (Id: {1})", rootFolder.Name, rootFolder.path);
-            GetRemoteDirectory();
             /*
             // Initialize a new Client (with an AccessToken)
             var client2 = new DropboxRestAPI.Client(options);
@@ -107,39 +100,22 @@ namespace Mycloud
             _directoryList = await _client.Core.Metadata.MetadataAsync(_path, list: true);
         }
 
-
-        public List<string> GetFolderList()
+        public List<DirectoryObject> listDirectory()
         {
-            _folders.Clear();
-            if (_directoryList == null)
-                return _folders;
-            foreach (var folders in _directoryList.contents)
-            {
-                if (folders.is_dir)
-                    _folders.Add(folders.Name);
-            }
-            return (_folders);
-        }
-
-
-        public List<string> GetFileList()
-        {
-            _files.Clear();
-            if (_directoryList == null)
-                return _files;
-            foreach (var file in _directoryList.contents)
-            {
-                if (!file.is_dir)
-                   _files.Add(file.Name);
-            }
-            return (_files);
+            _itemList.Clear();
+            if (_directoryList == null || _directoryList.contents == null)
+                return _itemList;
+            foreach (var item in _directoryList.contents)
+                _itemList.Add(new DirectoryObject(item.Name, (item.is_dir) ? DirectoryObject.objectType.Folder : DirectoryObject.objectType.File)
+                    { size = item.size, lastModifDate = item.modified } );
+            return (_itemList);
         }
 
         public void GoToFolder(string folderName)
         {
-            foreach (var folder in _folders)
+            foreach (var folder in _itemList)
             {
-                if (folder == folderName)
+                if (folder.type == DirectoryObject.objectType.Folder && folder.name == folderName)
                 {
                     if (_path != "/")
                         _path += "/";
@@ -171,8 +147,7 @@ namespace Mycloud
 
         public void UpdateFileAndFolderList()
         {
-            GetRemoteDirectory();
-            //AsyncContext.Run(GetRemoteDirectory);
+            AsyncContext.Run(GetRemoteDirectory);
         }
 
     }
