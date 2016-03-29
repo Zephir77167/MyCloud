@@ -53,7 +53,7 @@ namespace MyCloud
         {
             if (cloud == null)
                 return ;
-            cloud.UpdateFileAndFolderList();
+            
             directoryList.Clear();
             directoryList.Add(new DirectoryObject("..", DirectoryObject.objectType.ReactiveName));
             List<string> folders = cloud.GetFolderList();
