@@ -29,7 +29,7 @@
         <DockPanel Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="330" x:Name="playListPanel"/>
+                    <ColumnDefinition Width="330"/>
                     <ColumnDefinition Width="2"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
@@ -54,11 +54,19 @@
                             </Button>
                         </DockPanel>
                         <DockPanel Grid.Row="1">
-                            <ListView x:Name="cloudItemList" Margin="2"  ItemsSource="{Binding Path=MyCloud.CloudList}">
+                            <ListView x:Name="cloudItemList" Margin="2" ItemsSource="{Binding cloudList}">
                                 <ListView.View>
-                                    <GridView  AllowsColumnReorder="True" ColumnHeaderToolTip="Cloud directory">
-                                        <GridViewColumn Header="Host" DisplayMemberBinding="{Binding Path=Host}"/>
-                                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}"/>
+                                    <GridView>
+                                        <GridViewColumn Header="Repertoire cloud">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="{Binding Path=icone}" Margin="0, 0, 6, 0" Height="16" Width="16"/>
+                                                        <TextBlock Text="{Binding Path=name}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -66,13 +74,21 @@
                     </Grid>
                 </DockPanel>
                 <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-                <DockPanel x:Name="PlayerCanvas" Grid.Column="2" MinWidth="360" MinHeight="240">
-                    <ListView x:Name="Directory" Margin="2"  ItemsSource="{Binding Path=MyCloud.cloudRepo}">
+                <DockPanel Grid.Column="2" MinWidth="360" MinHeight="240">
+                    <ListView x:Name="directoryItemList" ItemsSource="{Binding directoryList}" Margin="2">
                         <ListView.View>
                             <GridView  AllowsColumnReorder="True">
-                                <GridViewColumn Header="Nom" DisplayMemberBinding="{Binding Path=name}"/>
+                                <GridViewColumn Header="Nom">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding Path=icone}" Margin="0, 0, 6, 0" Height="16" Width="16"/>
+                                                <TextBlock Text="{Binding Path=name}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="Modifié le" DisplayMemberBinding="{Binding Path=lastModifDate}"/>
-                                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=type}"/>
                                 <GridViewColumn Header="Taille" DisplayMemberBinding="{Binding Path=size}"/>
                             </GridView>
                         </ListView.View>

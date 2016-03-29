@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace MyCloud
 {
@@ -20,8 +22,8 @@ namespace MyCloud
     
     public partial class ConnectWindow : Window
     {
-        private List<IStorage> cloudlist;
-        public ConnectWindow(List<IStorage> _list)
+        private ObservableCollection<IStorage> cloudlist;
+        public ConnectWindow(ObservableCollection<IStorage> _list)
         {
             InitializeComponent();
             cloudlist = _list;
