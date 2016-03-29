@@ -33,17 +33,12 @@ namespace MyCloud
 
             cloudList = new ObservableCollection<IStorage>();
             directoryList = new ObservableCollection<DirectoryObject>();
-            directoryList.Add(new DirectoryObject("..", DirectoryObject.objectType.ReactiveName));
-            directoryList.Add(new DirectoryObject("TestDir", DirectoryObject.objectType.Folder));
-            directoryList.Add(new DirectoryObject("TestFichier",DirectoryObject.objectType.File));
-            directoryList.Add(new DirectoryObject("porn", DirectoryObject.objectType.File));
             this.DataContext = this;
         }
         private void CloudConnect(object sender, RoutedEventArgs e)
         {
-            ConnectWindow loginBox = new ConnectWindow(cloudList);
+            ConnectWindow loginBox = new ConnectWindow(this);
             loginBox.Show();
-            RaisePropertyChanged("cloudList");
         }
         private void CloudDisconnect(object sender, RoutedEventArgs e)
         {
@@ -56,15 +51,17 @@ namespace MyCloud
 
         public void DirectoryRefreshFromCloud(IStorage cloud)
         {
+            if (cloud == null)
+                return ;
             cloud.UpdateFileAndFolderList();
             directoryList.Clear();
+            directoryList.Add(new DirectoryObject("..", DirectoryObject.objectType.ReactiveName));
             List<string> folders = cloud.GetFolderList();
             foreach (string folderName in folders)
                 directoryList.Add(new DirectoryObject(folderName, DirectoryObject.objectType.Folder));
             List<string> files = cloud.GetFileList();
             foreach (string fileName in files)
                 directoryList.Add(new DirectoryObject(fileName, DirectoryObject.objectType.File));
-            RaisePropertyChanged("directoryList");
         }
 
         private void CloudSuppr(object sender, RoutedEventArgs e)
@@ -80,10 +77,16 @@ namespace MyCloud
                 var elem = item.Content as DirectoryObject;
                 if (elem.type == DirectoryObject.objectType.File)
                     currentCloud.DownloadFile(elem.name);
-                else if (elem.type == DirectoryObject.objectType.Folder)
-                    currentCloud.GoToFolder(elem.name);
-                else if (elem.type == DirectoryObject.objectType.ReactiveName && elem.name == "..")
-                    currentCloud.GoBackToParent();
+                else
+                {
+                    if (elem.type == DirectoryObject.objectType.Folder)
+                        currentCloud.GoToFolder(elem.name);
+                    else if (elem.type == DirectoryObject.objectType.ReactiveName && elem.name == "..")
+                        currentCloud.GoBackToParent();
+                    else
+                        return ;
+                    DirectoryRefreshFromCloud(currentCloud);
+                }
             }
         }
 
@@ -97,7 +100,7 @@ namespace MyCloud
             }
         }
 
-        public class DirectoryObject : INotifyPropertyChanged
+        public class DirectoryObject
         {
             public enum objectType { Folder = 0, File, ReactiveName };
             public DirectoryObject(string n, objectType t)
@@ -119,19 +122,6 @@ namespace MyCloud
             public string size { get; set; }
             public string lastModifDate { get; set; }
             public string icone { get; set; }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            private void RaisePropertyChanged(string propName)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        private void RaisePropertyChanged(string propName)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
     }
 

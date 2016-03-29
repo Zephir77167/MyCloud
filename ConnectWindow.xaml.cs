@@ -22,11 +22,11 @@ namespace MyCloud
     
     public partial class ConnectWindow : Window
     {
-        private ObservableCollection<IStorage> cloudlist;
-        public ConnectWindow(ObservableCollection<IStorage> _list)
+        private MainWindow parent;
+        public ConnectWindow(MainWindow p)
         {
             InitializeComponent();
-            cloudlist = _list;
+            p = parent;
         }
 
         private void CloudLogin(object sender, RoutedEventArgs e)
@@ -36,7 +36,14 @@ namespace MyCloud
                 cloud = new Mycloud.GoogleDrive();
             else
                 cloud = new Mycloud.Dropbox();
-            cloudlist.Add(cloud);
+            if (cloud != null)
+            {
+                parent.cloudList.Add(cloud);
+                parent.currentCloud = cloud;
+                cloud.UpdateFileAndFolderList();
+                parent.DirectoryRefreshFromCloud(cloud);
+            }
+            this.Close();
         }
     }
 }
