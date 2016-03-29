@@ -37,6 +37,7 @@ namespace MyCloud
         }
         private void CloudRefresh(object sender, RoutedEventArgs e)
         {
+            currentCloud.UpdateFileAndFolderList();
             DirectoryRefreshFromCloud(currentCloud);
         }
 
