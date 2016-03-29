@@ -8,7 +8,7 @@ namespace MyCloud
 {
     public interface IStorage
     {
-        void Connect(string userName, string password);
+        void Connect();
         List<string> GetBucketList();
         List<string> GetFolderList();
         List<string> GetFileList();

@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyCloud"
         mc:Ignorable="d"
-        Title="Ajout d'un Cloud" Height="202" Width="300" ResizeMode="NoResize">
+        Title="Ajout d'un Cloud" Height="161.722" Width="300" ResizeMode="NoResize">
     <Grid>
-        <Label Content="Platforme cloud" HorizontalAlignment="Left" Margin="32,22,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="cloudType" HorizontalAlignment="Left" Margin="131,22,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0">
+        <Label Content="Platforme cloud" HorizontalAlignment="Left" Margin="40,30,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cloudType" HorizontalAlignment="Left" Margin="139,29,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0">
             <ComboBoxItem>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="Resources/googledrive.png" Margin="0, 0, 6, 0"/>
@@ -22,10 +22,6 @@
                 </StackPanel>
             </ComboBoxItem>
         </ComboBox>
-        <Label Content="Nom d'utilisateur" HorizontalAlignment="Left" Margin="24,46,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="login" HorizontalAlignment="Left" Height="23" Margin="131,49,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="128"/>
-        <Label Content="Mots de passe" HorizontalAlignment="Left" Margin="39,71,0,0" VerticalAlignment="Top"/>
-        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="131,77,0,0" VerticalAlignment="Top" Width="128"/>
-        <Button Click="CloudLogin" Content="Connexion" HorizontalAlignment="Left" Height="27" Margin="79,119,0,0" VerticalAlignment="Top" Width="130"/>
+        <Button Click="CloudLogin" Content="Connexion" HorizontalAlignment="Left" Height="27" Margin="77,79,0,0" VerticalAlignment="Top" Width="130"/>
     </Grid>
 </Window>
