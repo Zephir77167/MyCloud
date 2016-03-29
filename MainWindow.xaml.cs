@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using ListViewItem = System.Windows.Controls.ListViewItem;
@@ -75,6 +76,10 @@ namespace MyCloud
                     if (currentCloud.DownloadFile(elem.name, fbd.SelectedPath))
                     {
                         System.Windows.Forms.MessageBox.Show(elem.name + " a été téléchargé dans " + fbd.SelectedPath, "Succès", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show(elem.name + "n'a pu être ouvert en raison de son type.", "Erreur", MessageBoxButtons.OK);
                     }
                 }
                 else

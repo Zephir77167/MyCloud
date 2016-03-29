@@ -208,14 +208,44 @@ namespace Mycloud
             }
 
             if (!String.IsNullOrEmpty(downloadUrl = fileToDownload.DownloadUrl)
-                || !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/pdf"])
-                || !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/zip"]))
+                || (fileToDownload.ExportLinks != null
+                    && ((fileToDownload.ExportLinks.ContainsKey("application/vnd.oasis.opendocument.text")
+                            && !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]))
+                        || (fileToDownload.ExportLinks.ContainsKey("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                            && !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]))
+                        || (fileToDownload.ExportLinks.ContainsKey("application/pdf")
+                            && !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/pdf"]))
+                        || (fileToDownload.ExportLinks.ContainsKey("application/zip")
+                            && !String.IsNullOrEmpty(downloadUrl = fileToDownload.ExportLinks["application/zip"])))))
             {
                 try
                 {
                     var x = _service.HttpClient.GetByteArrayAsync(downloadUrl);
                     byte[] arrBytes = x.Result;
-                    System.IO.File.WriteAllBytes(downloadPath, arrBytes);
+
+                    string extension;
+                    if (fileToDownload.ExportLinks.ContainsKey("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+                    {
+                        extension = ".docx";
+                    }
+                    else if (fileToDownload.ExportLinks.ContainsKey("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    {
+                        extension = ".xls";
+                    }
+                    else if (fileToDownload.ExportLinks.ContainsKey("application/pdf"))
+                    {
+                        extension = ".pdf";
+                    }
+                    else if (fileToDownload.ExportLinks.ContainsKey("application/zip"))
+                    {
+                        extension = ".zip";
+                    }
+                    else
+                    {
+                        extension = ".txt";
+                    }
+
+                    System.IO.File.WriteAllBytes(downloadPath + "\\" + fileToDownload.Title + extension, arrBytes);
                     return true;
                 }
                 catch (Exception e)
