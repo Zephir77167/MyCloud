@@ -16,6 +16,5 @@ namespace MyCloud
         List<string> GetFileList();
         void GoToFolder(string folderName);
         void GoBackToParent();
-        bool DownloadFile(string file);
     }
 }

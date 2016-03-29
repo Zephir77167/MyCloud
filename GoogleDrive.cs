@@ -89,6 +89,8 @@ namespace Mycloud
         public void UpdateFileAndFolderList()
         {
             _files.Clear();
+            _folders.Clear();
+
             ChildrenResource.ListRequest request = _service.Children.List(_currFolder);
 
             do
@@ -187,7 +189,7 @@ namespace Mycloud
             UpdateFileAndFolderList();
         }
 
-        public bool DownloadFile(string fileName)
+        public bool DownloadFile(string fileName, string downloadPath)
         {
             Google.Apis.Drive.v2.Data.File fileToDownload = null;
 
@@ -210,7 +212,7 @@ namespace Mycloud
                 {
                     var x = _service.HttpClient.GetByteArrayAsync(fileToDownload.DownloadUrl);
                     byte[] arrBytes = x.Result;
-                    System.IO.File.WriteAllBytes("./", arrBytes);
+                    System.IO.File.WriteAllBytes(downloadPath, arrBytes);
                     return true;
                 }
                 catch (Exception e)
