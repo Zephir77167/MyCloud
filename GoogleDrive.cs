@@ -88,13 +88,13 @@ namespace Mycloud
                         {
                             Google.Apis.Drive.v2.Data.File file = _service.Files.Get(child.Id).Execute();
 
-                            if (file.MimeType == "application/vnd.google-apps.file")
-                            {
-                                _files.Add(file);
-                            }
-                            else if (file.MimeType == "application/vnd.google-apps.folder")
+                            if (file.MimeType == "application/vnd.google-apps.folder")
                             {
                                 _folders.Add(file);
+                            }
+                            else
+                            {
+                                _files.Add(file);
                             }
                         }
                         catch (Exception e)
