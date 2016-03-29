@@ -30,11 +30,11 @@ namespace MyCloud
         private void CloudLogin(object sender, RoutedEventArgs e)
         {
             IStorage cloud;
-
-            if (cloudType.Text == "Google Drive")
-                cloud = new Mycloud.GoogleDrive("", "");
+            login.Text = cloudType.SelectedIndex.ToString();
+            if (cloudType.SelectedIndex == 0)
+                cloud = new Mycloud.GoogleDrive(password.Password, login.Text);
             else
-                cloud = new Mycloud.Dropbox("", "");
+                cloud = new Mycloud.Dropbox(password.Password, login.Text);
             cloudlist.Add(cloud);
         }
     }

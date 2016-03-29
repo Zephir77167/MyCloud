@@ -8,7 +8,7 @@
         Title="Ajout d'un Cloud" Height="202" Width="300" ResizeMode="NoResize">
     <Grid>
         <Label Content="Platforme cloud" HorizontalAlignment="Left" Margin="32,22,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="cloudType" HorizontalAlignment="Left" Margin="131,22,0,0" VerticalAlignment="Top" Width="128">
+        <ComboBox x:Name="cloudType" HorizontalAlignment="Left" Margin="131,22,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0">
             <ComboBoxItem>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="Resources/googledrive.png" Margin="0, 0, 6, 0"/>
