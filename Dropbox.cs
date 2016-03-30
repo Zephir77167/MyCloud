@@ -121,6 +121,7 @@ namespace Mycloud
                     _path += folder.name;
                 }
             }
+            UpdateFileAndFolderList();
         }
 
         public void GoBackToParent()
@@ -129,6 +130,7 @@ namespace Mycloud
                 return;
             int index = _path.LastIndexOf('/');
             _path = ((index == -1) ? _path : (_path.Substring(0, index)));
+            UpdateFileAndFolderList();
         }
 
         public bool DownloadFile(string file, string downloadPath)
