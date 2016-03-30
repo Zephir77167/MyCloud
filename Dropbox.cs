@@ -118,7 +118,7 @@ namespace Mycloud
                 {
                     if (_path != "/")
                         _path += "/";
-                    _path += folder;
+                    _path += folder.name;
                 }
             }
         }
