@@ -129,28 +129,19 @@ namespace Mycloud
             } while (!String.IsNullOrEmpty(request.PageToken));
         }
 
-        public List<string> GetFolderList()
+        public List<DirectoryObject> listDirectory()
         {
-            List<string> folders = new List<string>();
+            List<DirectoryObject>   items = new List<DirectoryObject>();
 
-            foreach (Google.Apis.Drive.v2.Data.File folder in _folders)
-            {
-                folders.Add(folder.Title);
-            }
+            foreach (var folder in _folders)
+                items.Add(new DirectoryObject(folder.Title, DirectoryObject.objectType.Folder)
+                { size = folder.FileSize.ToString(), lastModifDate = folder.ModifiedDateRaw });
 
-            return (folders);
-        }
+            foreach (var file in _files)
+                items.Add(new DirectoryObject(file.Title, DirectoryObject.objectType.File)
+                { size = file.FileSize.ToString(), lastModifDate = file.ModifiedDateRaw });
 
-        public List<string> GetFileList()
-        {
-            List<string>    files = new List<string>();
-
-            foreach (Google.Apis.Drive.v2.Data.File file in _files)
-            {
-                files.Add(file.Title);
-            }
-
-            return (files);
+            return (items);
         }
 
         public void GoToFolder(string folderName)
