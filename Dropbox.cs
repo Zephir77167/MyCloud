@@ -60,8 +60,7 @@ namespace Mycloud
             var accountInfo = await _client.Core.Accounts.AccountInfoAsync();
             name = accountInfo.email;
 
-            // Get root folder without content
-            var rootFolder = await _client.Core.Metadata.MetadataAsync("/", list: false);
+            await GetRemoteDirectory();
             /*
             // Initialize a new Client (with an AccessToken)
             var client2 = new DropboxRestAPI.Client(options);

@@ -30,7 +30,7 @@
                             <Button Click="CloudSuppr"  Margin="10,3,0,3">
                                <Image Source="Resources/cancel.png"/>
                             </Button>
-                            <Button Click="CloudRefresh" HorizontalAlignment="Right">
+                            <Button Click="CloudRefresh" Margin="10,3,0,3" HorizontalAlignment="Right">
                                <Image Source="Resources/refresh.png"/>
                             </Button>
                         </DockPanel>
