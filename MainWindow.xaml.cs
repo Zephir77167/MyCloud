@@ -56,7 +56,8 @@ namespace MyCloud
 
         private void CloudSuppr(object sender, RoutedEventArgs e)
         {
-
+            cloudList.Remove(currentCloud);
+            directoryList.Clear();
         }
 
         private void directoryItem_clicked(object sender, MouseButtonEventArgs e)

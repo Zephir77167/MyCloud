@@ -8,23 +8,9 @@
         Title="MyCloud" Height="800" Width="1000">
     <Grid Margin="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="24"  x:Name="menuBar"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0">
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_Fichier">
-                    <MenuItem x:Name="openButton" Header="_Ouvrir"/>
-                    <MenuItem x:Name="closeButton" Header="_Fermer"/>
-                    <Separator />
-                    <MenuItem x:Name="quitButton" Header="_Quitter"/>
-                </MenuItem>
-                <MenuItem Header="_Aide">
-                    <MenuItem x:Name="aboutUsButton" Header="_A propos de MyCloud"/>
-                </MenuItem>
-            </Menu>
-        </DockPanel>
-        <DockPanel Grid.Row="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="330"/>
@@ -41,14 +27,11 @@
                             <Button Click="CloudConnect" Margin="10,3,0,3">
                                 <Image Source="Resources/add.png"/>
                             </Button>
-                            <Button Click="CloudSuppr" Margin="10,3,0,3">
-                                <Image Source="Resources/cancel.png"/>
+                            <Button Click="CloudSuppr"  Margin="10,3,0,3">
+                               <Image Source="Resources/cancel.png"/>
                             </Button>
-                            <Button Click="CloudRefresh" Margin="10,3,0,3">
-                                <Image Source="Resources/refresh.png"/>
-                            </Button>
-                            <Button Click="CloudDisconnect" Margin="10,3,0,3"  HorizontalAlignment="Right">
-                                <Image Source="Resources/disconnect.png"/>
+                            <Button Click="CloudRefresh" HorizontalAlignment="Right">
+                               <Image Source="Resources/refresh.png"/>
                             </Button>
                         </DockPanel>
                         <DockPanel Grid.Row="1">
